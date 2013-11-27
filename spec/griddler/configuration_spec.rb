@@ -15,6 +15,12 @@ describe Griddler::Configuration do
     end
   end
 
+  it 'raises a helpful error if EmailProcessor is undefined' do
+    Kernel.stub(const_defined?: false)
+
+    expect { Griddler.configuration.processor_class }.to raise_error(NameError, %r{https://github\.com/thoughtbot/griddler#defaults})
+  end
+
   describe 'with config block' do
     after do
       Griddler.configure
@@ -80,7 +86,7 @@ describe Griddler::Configuration do
       config.should raise_error(Griddler::Errors::EmailServiceAdapterNotFound)
     end
 
-    it "accepts all valid email service adapter settings" do
+    it 'accepts all valid email service adapter settings' do
       [:sendgrid, :cloudmailin, :postmark, :mandrill, :mailgun].each do |adapter|
         config = lambda do
           Griddler.configure do |c|
